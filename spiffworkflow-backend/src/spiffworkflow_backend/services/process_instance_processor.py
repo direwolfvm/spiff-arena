@@ -114,10 +114,10 @@ def _make_import_with_package_dirs(package_dirs: list[str]) -> Callable:
     """
     import importlib
 
-    def _import_with_packages(name: str, glbls: dict[str, Any], *args: Any) -> None:
+    def _import_with_packages(name: str, glbls: dict[str, Any], *args: Any) -> Any:
         # If already in globals, allow it (standard builtins, code modules, etc.)
         if name in glbls:
-            return
+            return glbls[name]
         # Try to import from the package dirs
         saved_path = sys.path[:]
         try:
@@ -125,6 +125,7 @@ def _make_import_with_package_dirs(package_dirs: list[str]) -> Callable:
                 sys.path.insert(0, pkg_dir)
             mod = importlib.import_module(name)
             glbls[name] = mod
+            return mod
         except ImportError:
             raise ImportError(f"Import not allowed: {name}", name=name)
         finally:
@@ -464,6 +465,8 @@ class CustomBpmnScriptEngine(PythonScriptEngine):  # type: ignore
             # Add print back (RestrictedPython removes it). Our _console_print writes
             # to the active console buffer when one exists, otherwise logs the output.
             default_globals["__builtins__"]["print"] = _console_print
+            # Add locals back so code module functions can receive task_data via locals()
+            default_globals["__builtins__"]["locals"] = locals
 
         if code_modules:
             environment: BasePythonScriptEngineEnvironment = CodeModuleBasedScriptEngineEnvironment(
