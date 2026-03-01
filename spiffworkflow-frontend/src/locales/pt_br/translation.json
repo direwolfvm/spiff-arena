@@ -513,5 +513,6 @@
   "waiting_for": "Aguardando por",
   "was_active": "estava ativa",
   "workflows_created_by_me": "Workflows criados por mim",
-  "yes": "Sim"
+  "yes": "Sim",
+  "form_load_script": "Script de carregamento do formulário"
 }

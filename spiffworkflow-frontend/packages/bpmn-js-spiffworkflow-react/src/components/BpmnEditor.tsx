@@ -484,6 +484,11 @@ const BpmnEditor = forwardRef<BpmnEditorRef, BpmnEditorInternalProps>(
               (extension: any) =>
                 extension.$type === 'spiffworkflow:PostScript',
             );
+          const formLoadScript =
+            event.element.businessObject.extensionElements?.values?.find(
+              (extension: any) =>
+                extension.$type === 'spiffworkflow:FormLoadScript',
+            );
           const overlays = diagramModeler.get('overlays');
           const scriptIcon = convertSvgElementToHtmlString(
             <BpmnJsScriptIcon />,
@@ -503,6 +508,15 @@ const BpmnEditor = forwardRef<BpmnEditorRef, BpmnEditorInternalProps>(
               position: {
                 bottom: 25,
                 right: 25,
+              },
+              html: scriptIcon,
+            });
+          }
+          if (formLoadScript?.value) {
+            overlays.add(event.element.id, {
+              position: {
+                top: 0,
+                left: 0,
               },
               html: scriptIcon,
             });
